@@ -44,7 +44,9 @@ public class DBConnection {
         try {
             getInfo();
             Class.forName("com.mysql.jdbc.Driver");
+
             conn =  (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/ict", user, pass);
+
             stmt=(Statement) conn.createStatement();
             String tempSql = "SELECT COUNT(*) FROM students";
             ResultSet rs = stmt.executeQuery(tempSql);
@@ -56,6 +58,10 @@ public class DBConnection {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            if(e.getMessage().contains("Communications link failure")){
+                JOptionPane.showMessageDialog(null, "Server is down!","Not found", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
             int dialogButton = JOptionPane.YES_NO_OPTION;
             int dialogResult = JOptionPane.showConfirmDialog (null, "Wrong username or password\nTry Again?",
                                                                 "Error", dialogButton, JOptionPane.ERROR_MESSAGE);
@@ -91,7 +97,8 @@ public class DBConnection {
            }
             //Form.sql = " ";
         } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unknown Colum","Not found", JOptionPane.ERROR_MESSAGE);
+
         }
         return res;
     }

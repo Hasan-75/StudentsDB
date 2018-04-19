@@ -421,6 +421,7 @@ public class Form extends javax.swing.JFrame {
 
     private void selectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectMouseClicked
         // TODO add your handling code here:
+        clrTxt();
         this.submit.setText("Select");
         setLblPos(select);
         repaint();
@@ -549,7 +550,18 @@ public class Form extends javax.swing.JFrame {
                 isToUpdate = false;
                 sql = "SELECT * FROM students ORDER BY ID DESC LIMIT 1";
                 break;
-            
+
+            case "select":
+                isToUpdate = false;
+                if(!name.getText().trim().isEmpty()){
+                    sql = "SELECT * FROM students WHERE Name = \""+name.getText().trim()+"\"";
+                }else if(!roll.getText().trim().isEmpty()){
+                    sql = "SELECT * FROM students WHERE Roll = "+roll.getText().trim();
+                }
+                else
+                    sql ="";
+                break;
+
             case "insert":
                 isToUpdate = true;
                 sql = "INSERT INTO students (Name, Roll, Age, id) VALUES("
