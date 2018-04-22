@@ -23,21 +23,20 @@ import java.util.logging.Logger;
 public class DBConnection {
     Connection conn;
     Statement stmt;
+    LoginF login;
     String user;
     String pass;
+    DBConnection dc;
     public DBConnection(){
-        setConn();
+        dc = this;
+        loginPage();
+        //setConn();
     }
 
     void getInfo(){
-        user = JOptionPane.showInputDialog("Input MySQL Username");
-        JPasswordField passwordField = new JPasswordField();
-        //passwordField.setEchoChar('X');
-        Object[] obj = {"Input MySQL Password", passwordField};
-        Object stringArray[] = {"OK"};
-        JOptionPane.showOptionDialog(null, obj, "Password",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, stringArray, obj);
-        pass = new String(passwordField.getPassword());
+        
+        user = login.usrTF.getText();
+        pass = new String(login.passTF.getPassword());
     }
 
     void setConn(){
@@ -53,6 +52,10 @@ public class DBConnection {
             if(rs.next()){
                 Form.numOfRows = rs.getInt(1);
             }
+            
+            showMainPage();
+            login.dispose();
+            
         } catch (ClassNotFoundException e) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, e);
 
@@ -68,7 +71,7 @@ public class DBConnection {
             if(dialogResult == JOptionPane.NO_OPTION) {
                 System.exit(0);
             }
-            wrongUser(e);
+           // wrongUser(e);
         }
     }
 
@@ -109,5 +112,69 @@ public class DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void loginPage() {
+        try {
+            
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                login = new LoginF(dc);
+                login.setLocationRelativeTo(null);
+                login.setResizable(false);
+                login.setVisible(true);
+                
+            }
+        });
+    }
+
+    private void showMainPage() {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                Form f = new Form();
+                f.setLocationRelativeTo(null);
+                f.setResizable(false);
+                f.setVisible(true);
+            }
+        });
     }
 }

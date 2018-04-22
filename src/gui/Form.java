@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,7 +25,7 @@ public class Form extends javax.swing.JFrame {
     public static String sql = "";
     Integer id = 0;
     Integer x = -100, y = -100;
-    DBConnection conn;
+    static DBConnection conn;
     String results[][];
     String lastOp = "";
     boolean isToUpdate;
@@ -32,7 +33,6 @@ public class Form extends javax.swing.JFrame {
     public static Integer numOfRows;
     public Form() {
         initComponents();
-        conn = new DBConnection();
        
     }
 
@@ -470,35 +470,9 @@ public class Form extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Form().setVisible(true);
-            }
-        });
+        
+        conn = new DBConnection();
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -528,80 +502,85 @@ public class Form extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void checkLastOp() {
-        switch(lastOp){
-            case "first":
-                isToUpdate = false;
-                sql = "SELECT * FROM students WHERE id=1";
-                break;
-            
-            case "next":
-                isToUpdate = false;
-                id = this.currentId;
-                sql = "SELECT * FROM students WHERE id="+(++id).toString();
-                break;
-            
-            case "prev":
-                isToUpdate = false;
-                id = this.currentId;
-                sql = "SELECT * FROM students WHERE id="+(--id).toString();
-                break;
-            
-            case "last":
-                isToUpdate = false;
-                sql = "SELECT * FROM students ORDER BY ID DESC LIMIT 1";
-                break;
+        try{
+            switch(lastOp){
+                case "first":
+                    isToUpdate = false;
+                    sql = "SELECT * FROM students WHERE id=1";
+                    break;
 
-            case "select":
-                isToUpdate = false;
-                if(!name.getText().trim().isEmpty()){
-                    sql = "SELECT * FROM students WHERE Name = \""+name.getText().trim()+"\"";
-                }else if(!roll.getText().trim().isEmpty()){
-                    sql = "SELECT * FROM students WHERE Roll = "+roll.getText().trim();
-                }
-                else
-                    sql ="";
-                break;
+                case "next":
+                    isToUpdate = false;
+                    id = this.currentId;
+                    sql = "SELECT * FROM students WHERE id="+(++id).toString();
+                    break;
 
-            case "insert":
-                isToUpdate = true;
-                sql = "INSERT INTO students (Name, Roll, Age, id) VALUES("
+                case "prev":
+                    isToUpdate = false;
+                    id = this.currentId;
+                    sql = "SELECT * FROM students WHERE id="+(--id).toString();
+                    break;
+
+                case "last":
+                    isToUpdate = false;
+                    sql = "SELECT * FROM students ORDER BY ID DESC LIMIT 1";
+                    break;
+
+                case "select":
+                    isToUpdate = false;
+                    if(!name.getText().trim().isEmpty()){
+                        sql = "SELECT * FROM students WHERE Name = \""+name.getText().trim()+"\"";
+                    }else if(!roll.getText().trim().isEmpty()){
+                        sql = "SELECT * FROM students WHERE Roll = "+roll.getText().trim();
+                    }
+                    else
+                        sql ="";
+                    break;
+
+                case "insert":
+                    isToUpdate = true;
+                    sql = "INSERT INTO students (Name, Roll, Age, id) VALUES("
+                            +"\"" 
+                            +this.name.getText()
+                            +"\""
+                            + ","
+                            + Integer.parseInt(this.roll.getText())
+                            + ","
+                            + Integer.parseInt(this.age.getText())
+                            + ","
+                            + (++this.numOfRows)
+                            + ")";
+                    this.currentId = this.numOfRows;
+                    break;    
+
+                case "update":
+                    isToUpdate = true;
+                    sql = "UPDATE students "
+                        +"SET Name =" 
                         +"\"" 
                         +this.name.getText()
                         +"\""
                         + ","
+                        +"Roll =" 
                         + Integer.parseInt(this.roll.getText())
                         + ","
+                        +"Age =" 
                         + Integer.parseInt(this.age.getText())
-                        + ","
-                        + (++this.numOfRows)
-                        + ")";
-                this.currentId = this.numOfRows;
-                break;    
-            
-            case "update":
-                isToUpdate = true;
-                sql = "UPDATE students "
-                    +"SET Name =" 
-                    +"\"" 
-                    +this.name.getText()
-                    +"\""
-                    + ","
-                    +"Roll =" 
-                    + Integer.parseInt(this.roll.getText())
-                    + ","
-                    +"Age =" 
-                    + Integer.parseInt(this.age.getText())
-                    +" WHERE id = "
-                    +this.currentId;
-                break;
-            
-            case "delete":
-                isToUpdate = true;
-                sql = "DELETE FROM students WHERE id = "
+                        +" WHERE id = "
                         +this.currentId;
-                this.numOfRows--;
-                clrTxt();
-                break;
+                    break;
+
+                case "delete":
+                    isToUpdate = true;
+                    sql = "DELETE FROM students WHERE id = "
+                            +this.currentId;
+                    this.numOfRows--;
+                    clrTxt();
+                    break;
+            }
+        }catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Input Number for Roll and Age","Invalid", JOptionPane.ERROR_MESSAGE);
+
         }
     }
 
